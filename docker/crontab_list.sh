@@ -88,8 +88,6 @@
 59 23 * * * node /scripts/jd_joy_reward.js >> /scripts/logs/jd_joy_reward.log 2>&1 
 #宠汪汪解除封印脚本
 58 23 * * * node /scripts/jd_joy_reward_auth.js >> /scripts/logs/jd_joy_reward_auth.log 2>&1 
-#宠汪汪解除封印脚本
-58 23 * * * node /scripts/jd_joy_reward_auth.js >> /scripts/logs/jd_joy_reward_auth.log 2>&1 
 #宠汪汪偷好友积分与狗粮
 10 0-21/3 * * * node /scripts/jd_joy_steal.js >> /scripts/logs/jd_joy_steal.log 2>&1
 #跳跳乐瓜分京豆
