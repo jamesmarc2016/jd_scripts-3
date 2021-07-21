@@ -30,7 +30,7 @@ let cookiesArr = [], cookie = '', message;
 let helpAuthor = true;
 const randomCount = $.isNode() ? 5 : 5;
 let cash_exchange = false;//是否消耗2元红包兑换200京豆，默认否
-const inviteCodes = []
+const inviteCodes = ["eU9YaeW2Mv1zpD-HmiVHhQ@eU9YKJL3FLtYggSzvjdN@eU9YE77yI6Rxiyi8qTVk@eU9Ya-WwYf0i9jjVy3URgw@eU9Yaey7MvRz8GmEyHVC0Q","eU9YaeW2Mv1zpD-HmiVHhQ@eU9YKJL3FLtYggSzvjdN@eU9YE77yI6Rxiyi8qTVk@eU9Ya-WwYf0i9jjVy3URgw@eU9Yaey7MvRz8GmEyHVC0Q"]
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
