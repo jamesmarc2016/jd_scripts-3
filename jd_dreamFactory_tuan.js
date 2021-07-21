@@ -112,9 +112,9 @@ if ($.isNode()) {
       }
     }
   }
-  if ($.isNode() && allMessage) {
-    await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: jxOpenUrl })
-  }
+  //if ($.isNode() && allMessage) {
+  //  await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: jxOpenUrl })
+  //}
 })()
     .catch((e) => {
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
