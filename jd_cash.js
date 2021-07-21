@@ -395,7 +395,7 @@ function shareCodesFormat() {
 }
 
 function requireConfig() {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     console.log(`开始获取${$.name}配置文件\n`);
     let shareCodes = [];
     if ($.isNode()) {
