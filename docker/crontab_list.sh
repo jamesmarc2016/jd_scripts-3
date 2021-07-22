@@ -19,6 +19,8 @@
 20 * * * * node /scripts/jd_big_winner.js >> /scripts/logs/jd_big_winner.log 2>&1
 #零食街 6.20-12.31
 18 7,20 * * * node /scripts/jd_foodRunning.js >> /scripts/logs/jd_foodRunning.log 2>&1 
+#全民摸冰
+6  9,12 * * * node /scripts/jd_mb.js >> /scripts/logs/jd_mb.log 2>&1 
 ##############长期活动##############
 #京东月资产变动通知
 10 7 1-31/7 * * node /scripts/jd_all_bean_change.js >> /scripts/logs/jd_all_bean_change.log 2>&1
@@ -144,3 +146,5 @@
 10 0,7,23 * * * node /scripts/jd_syj.js >> /scripts/logs/jd_syj.log 2>&1
 #取关京东店铺商品
 55 23 * * * node /scripts/jd_unsubscribe.js >> /scripts/logs/jd_unsubscribe.log 2>&1
+#领京豆-升级赚京豆
+21 9 * * * node /scripts/gua_MMdou.js >> /scripts/logs/gua_MMdou.log 2>&1
