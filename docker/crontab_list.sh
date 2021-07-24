@@ -23,6 +23,8 @@
 6  9,12 * * * node /scripts/jd_mb.js >> /scripts/logs/jd_mb.log 2>&1 
 #燃烧夏季
 20 0,6-23/2 * * * node /scripts/jd_summer_movement.js >> /scripts/logs/jd_summer_movement.log 2>&1 
+#特务z
+23 0,9 24-27 7 * node /scripts/jd_productZBrand.js >> /scripts/logs/jd_productZBrand.log 2>&1 
 ##############长期活动##############
 #京东月资产变动通知
 10 7 1-31/7 * * node /scripts/jd_all_bean_change.js >> /scripts/logs/jd_all_bean_change.log 2>&1
