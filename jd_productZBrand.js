@@ -51,19 +51,17 @@ if ($.isNode()) {
     await $.wait(1000);
   }
   
-  $.authorShareCodes=["S5KkcRRcdoVWCdUumxaFeJw"];
 
   for (let i = 0; i < cookiesArr.length; i++) {
     $.cookie = cookiesArr[i];
     $.canHelp = true;
     $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
     $.encryptProjectId = useInfo[$.nickName];
-	
-	 for (let k = 0; k <  $.authorShareCodes.length; k++) {
-	   $.code = $.authorShareCodes[k];
-	   await takePostRequest('help');
+
+       $.code = 'S5KkcRRcdoVWCdUumxaFeJw';
+       await takePostRequest('help');
        await $.wait(2000);
-     }
+
 
     for (let j = 0; j < $.allInvite.length && $.canHelp; j++) {
       $.codeInfo = $.allInvite[j];
