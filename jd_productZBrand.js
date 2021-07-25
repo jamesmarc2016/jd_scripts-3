@@ -73,7 +73,7 @@ if ($.isNode()) {
     $.cookie = cookiesArr[i];
     $.canHelp = true;
     $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
-    $.encryptProjectId = useInfo[$.nickName];allInvite
+    $.encryptProjectId = useInfo[$.nickName];
 
 										  
 									 
