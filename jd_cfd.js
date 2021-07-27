@@ -57,7 +57,7 @@ $.appId = 10028;
   }
   $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
   await requestAlgo();
-  await $.wait(1000);
+  await $.wait(1000)
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -1095,7 +1095,7 @@ function helpByStage(shareCodes) {
             console.log(`助力失败：${data.sErrMsg}`)
             $.canHelp = false
           } else if (data.iRet === 2229 || data.sErrMsg === '助力失败啦~') {
-            console.log(`助力失败：您的账号或者被助力的账号可能已黑，请联系客服`)
+            console.log(`助力失败：您的账号或被助力的账号可能已黑，请联系客服`)
             // $.canHelp = false
           } else {
             console.log(`助力失败：${data.sErrMsg}`)
@@ -1197,8 +1197,8 @@ function getUserInfo(showInvite = true) {
       } finally {
         resolve();
       }
-    });
-  });
+    })
+  })
 }
 
 //任务
@@ -1333,21 +1333,21 @@ function doTask(taskId, type = 1) {
         break
     }
   })
-	  
-	 
-	
-	 
-	
-	 
-																		   
+					 
 		   
-													   
-				  
-											   
-																				 
-				
-												
-		 
+		  
+			  
+			 
+	 
+	
+   
+  
+ 
+  
+ 
+  
+					 
+	 
 }
 
 //领取奖励
@@ -1566,14 +1566,14 @@ function readShareCode() {
 function shareCodesFormat() {
   return new Promise(async resolve => {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-   $.newShareCodes = [...($.strMyShareIds || [])];
+    $.newShareCodes = [...($.strMyShareIds || [])];
     if ($.shareCodesArr[$.index - 1]) {
 	   let helpShareCodes = $.shareCodesArr[$.index - 1].split('@');
 	   helpShareCodes.forEach(element => {
 			if( $.newShareCodes.indexOf(element) == -1){
 			  $.newShareCodes.push(element);
 			}
-		});						   
+		});											 
     } else {
       console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       // const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
@@ -1616,7 +1616,7 @@ function requireConfig() {
 		await $.wait(1000)
 		res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_cfd.json')
 	}
-	$.strMyShareIds = [...(res && res.shareId || [])];								  
+	$.strMyShareIds = [...(res && res.shareId || [])];										 
     resolve()
   })
 }
