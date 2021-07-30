@@ -158,4 +158,5 @@
 55 23 * * * node /scripts/jd_unsubscribe.js >> /scripts/logs/jd_unsubscribe.log 2>&1
 #领京豆-升级赚京豆
 21 9 * * * node /scripts/jd_gua_MMdou.js >> /scripts/logs/jd_gua_MMdou.log 2>&1
-
+#京喜签到
+20 1 * * * node /scripts/jx_sign.js >> /scripts/logs/jx_sign.log 2>&1
