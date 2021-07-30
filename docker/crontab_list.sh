@@ -26,6 +26,8 @@
 #特务z
 23 0,9 24-27 7 * node /scripts/jd_productZBrand.js >> /scripts/logs/jd_productZBrand.log 2>&1 
 ##############长期活动##############
+# 签到
+7 0,8,20 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
 #京东月资产变动通知
 10 7 1-31/7 * * node /scripts/jd_all_bean_change.js >> /scripts/logs/jd_all_bean_change.log 2>&1
 #资产变动通知
