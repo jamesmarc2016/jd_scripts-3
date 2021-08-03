@@ -1,7 +1,7 @@
 /*
 京东极速版红包
 自动提现微信现金
-更新时间：2021-5-31
+更新时间：2021-8-2
 活动时间：2021-4-6至2021-5-30
 活动地址：https://prodev.m.jd.com/jdlite/active/31U4T6S4PbcK83HyLPioeCWrD63j/index.html
 活动入口：京东极速版-领红包
@@ -22,16 +22,13 @@ cron "20 0,22 * * *" script-path=jd_speed_redpocke.js,tag=京东极速版红包
 ============小火箭=========
 京东极速版红包 = type=cron,script-path=jd_speed_redpocke.js, cronexpr="20 0,22 * * *", timeout=3600, enable=true
 */
-
 const $ = new Env('京东极速版红包');
-
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let cookiesArr = [], cookie = '', message;
-const linkId = "AkOULcXbUA_8EAPbYLLMgg";
+const linkId = "9wdf1YTT2L59Vr-meKskLA";
 const signLinkId = '9WA12jYGulArzWS7vcrwhw';
-
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -41,7 +38,6 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
-
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -70,16 +66,16 @@ if ($.isNode()) {
     }
   }
 })()
-    .catch((e) => {
-      $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-    })
-    .finally(() => {
-      $.done();
-    })
+  .catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+  })
+  .finally(() => {
+    $.done();
+  })
 
 async function jsRedPacket() {
   try {
-    //await invite();
+    await invite();
     await sign();//极速版签到提现
     await reward_query();
     for (let i = 0; i < 3; ++i) {
@@ -93,7 +89,6 @@ async function jsRedPacket() {
     $.logErr(e)
   }
 }
-
 
 function showMsg() {
   return new Promise(resolve => {
@@ -178,7 +173,7 @@ function reward_query() {
 }
 async function redPacket() {
   return new Promise(resolve => {
-    $.get(taskGetUrl("spring_reward_receive",{"inviter":"xlOvyZbXqs0mu_R2jZ0fdqu9XpGJJ-oWRMA39Czna48",linkId}),
+    $.get(taskGetUrl("spring_reward_receive",{"inviter":"xlOvyZbXqs0mu_R2jZ0fdqu9XpGJJ-oWRMA39Czna48", linkId}),
         async (err, resp, data) => {
           try {
             if (err) {
@@ -393,6 +388,35 @@ function cashOut(id,poolBaseId,prizeGroupId,prizeBaseId,) {
     })
   })
 }
+
+function invite() {
+  let t = +new Date()
+  let inviterId = 'aackANWeNftPmdSg3v6CvCugtWXLN9rcj/iItXjorqU=';
+  console.log([
+    "5V7vHE23qh2EkdBHXRFDuA=="
+  ][Math.floor((Math.random() * 1))]);
+  var headers = {
+    'Host': 'api.m.jd.com',
+    'accept': 'application/json, text/plain, */*',
+    'content-type': 'application/x-www-form-urlencoded',
+    'origin': 'https://invite-reward.jd.com',
+    'accept-language': 'zh-cn',
+    'user-agent': $.isNode() ? (process.env.JS_USER_AGENT ? process.env.JS_USER_AGENT : (require('./JS_USER_AGENTS').USER_AGENT)) : ($.getdata('JSUA') ? $.getdata('JSUA') : "'jdltapp;iPad;3.1.0;14.4;network/wifi;Mozilla/5.0 (iPad; CPU OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+    'referer': 'https://invite-reward.jd.com/',
+    'Cookie': cookie
+  };
+
+  var dataString = `functionId=InviteFriendChangeAssertsService&body={"method":"attendInviteActivity","data":{"inviterPin":"${encodeURIComponent(inviterId)}","channel":1,"token":"","frontendInitStatus":""}}&referer=-1&eid=eidI9b2981202fsec83iRW1nTsOVzCocWda3YHPN471AY78%2FQBhYbXeWtdg%2F3TCtVTMrE1JjM8Sqt8f2TqF1Z5P%2FRPGlzA1dERP0Z5bLWdq5N5B2VbBO&aid=&client=ios&clientVersion=14.4.2&networkType=wifi&fp=-1&uuid=ab048084b47df24880613326feffdf7eee471488&osVersion=14.4.2&d_brand=iPhone&d_model=iPhone10,2&agent=-1&pageClickKey=-1&platform=3&lang=zh_CN&appid=market-task-h5&_t=${t}`;
+  var options = {
+    url: `https://api.m.jd.com/?t=${t}`,
+    headers: headers,
+    body: dataString
+  };
+  $.post(options, (err, resp, data) => {
+    // console.log(data)
+  })
+}
+
 function taskPostUrl(function_id, body) {
   return {
     url: `https://api.m.jd.com/`,
@@ -433,9 +457,9 @@ function taskGetUrl(function_id, body) {
 function TotalBean() {
   return new Promise(async resolve => {
     const options = {
-      url: "https://wq.jd.com/user_new/info/GetJDUserInfoUnion?sceneval=2",
+      url: "https://me-api.jd.com/user_new/info/GetJDUserInfoUnion",
       headers: {
-        Host: "wq.jd.com",
+        Host: "me-api.jd.com",
         Accept: "*/*",
         Connection: "keep-alive",
         Cookie: cookie,
@@ -452,11 +476,11 @@ function TotalBean() {
         } else {
           if (data) {
             data = JSON.parse(data);
-            if (data['retcode'] === 1001) {
+            if (data['retcode'] === "1001") {
               $.isLogin = false; //cookie过期
               return;
             }
-            if (data['retcode'] === 0 && data.data && data.data.hasOwnProperty("userInfo")) {
+            if (data['retcode'] === "0" && data.data && data.data.hasOwnProperty("userInfo")) {
               $.nickName = data.data.userInfo.baseInfo.nickname;
             }
           } else {
