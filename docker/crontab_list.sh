@@ -24,7 +24,7 @@
 #燃烧夏季
 #20 0,6-23/2 * * * node /scripts/jd_summer_movement.js >> /scripts/logs/jd_summer_movement.log 2>&1 
 #特务z
-23 8,9 5 8 * node /scripts/jd_productZBrand.js >> /scripts/logs/jd_productZBrand.log 2>&1 
+23 8,9 * * * node /scripts/jd_productZBrand.js >> /scripts/logs/jd_productZBrand.log 2>&1 
 ##############长期活动##############
 # 签到
 7 0,8,20 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
