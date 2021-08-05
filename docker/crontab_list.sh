@@ -148,8 +148,6 @@
 16 16 * * * node /scripts/jd_small_home.js >> /scripts/logs/jd_small_home.log 2>&1
 #京东极速版签到+赚现金任务
 21 1,6 * * * node /scripts/jd_speed_sign.js >> /scripts/logs/jd_speed_sign.log 2>&1
-#特物Z
-30 11 * * * node /scripts/jd_superBrand.js >> /scripts/logs/jd_superBrand.log 2>&1 
 #东东超市
 11 * * * * node /scripts/jd_superMarket.js >> /scripts/logs/jd_superMarket.log 2>&1
 #整点红包雨
