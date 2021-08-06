@@ -27,6 +27,8 @@
 23 8,9 * * * node /scripts/jd_productZBrand.js >> /scripts/logs/jd_productZBrand.log 2>&1 
 #店铺签到
 0 0 * * * node /scripts/jd_dpqd.js >> /scripts/logs/jd_dpqd.log 2>&1
+#8.4-8.15 七夕情报局🐶
+36 0,10,21 4-15 8 *  node /scripts/jd_doge.js >> /scripts/logs/jd_doge.log 2>&1
 ##############长期活动##############
 # 签到
 7 0,8,20 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
