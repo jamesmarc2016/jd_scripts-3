@@ -21,14 +21,14 @@
 18 7,20 * * * node /scripts/jd_foodRunning.js >> /scripts/logs/jd_foodRunning.log 2>&1 
 #全民摸冰
 6  9,12 * * * node /scripts/jd_mb.js >> /scripts/logs/jd_mb.log 2>&1 
-#燃烧夏季
-#20 0,6-23/2 * * * node /scripts/jd_summer_movement.js >> /scripts/logs/jd_summer_movement.log 2>&1 
 #特务z
 23 8,9 * * * node /scripts/jd_productZBrand.js >> /scripts/logs/jd_productZBrand.log 2>&1 
 #店铺签到
 0 0 * * * node /scripts/jd_dpqd.js >> /scripts/logs/jd_dpqd.log 2>&1
 #8.4-8.15 七夕情报局🐶
 36 0,10,21 4-15 8 *  node /scripts/jd_doge.js >> /scripts/logs/jd_doge.log 2>&1
+#荣耀焕新季
+0 1 * * * node /scripts/jd_ryhxj.js >> /scripts/logs/jd_ryhxj.log 2>&1
 ##############长期活动##############
 # 签到
 7 0,8,20 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
