@@ -86,30 +86,30 @@ async function jdCash() {
   await helpFriends()
   await getReward()
   await getReward('2');
-  $.exchangeBeanNum = 0;
-  cash_exchange = $.isNode() ? (process.env.CASH_EXCHANGE ? process.env.CASH_EXCHANGE : `${cash_exchange}`) : ($.getdata('cash_exchange') ? $.getdata('cash_exchange') : `${cash_exchange}`);
-  if (cash_exchange === 'true') {
-    if(Number($.signMoney) >= 2){
-      console.log(`\n\n开始花费2元红包兑换200京豆，一周可换五次`)
-      for (let item of ["-1", "0", "1", "2", "3"]) {
-        $.canLoop = true;
-        if ($.canLoop) {
-          for (let i = 0; i < 5; i++) {
-            await exchange2(item);//兑换200京豆(2元红包换200京豆，一周5次。)
-          }
-          if (!$.canLoop) {
-            console.log(`已找到符合的兑换条件，跳出\n`);
-            break
-          }
-        }
-      }
-      if ($.exchangeBeanNum) {
-        message += `兑换京豆成功，获得${$.exchangeBeanNum * 100}京豆\n`;
-      }
-    }else{
-      console.log(`\n\n现金不够2元，不进行兑换200京豆，`)
-    }
-  }
+  // $.exchangeBeanNum = 0;
+  // cash_exchange = $.isNode() ? (process.env.CASH_EXCHANGE ? process.env.CASH_EXCHANGE : `${cash_exchange}`) : ($.getdata('cash_exchange') ? $.getdata('cash_exchange') : `${cash_exchange}`);
+  // if (cash_exchange === 'true') {
+    // if(Number($.signMoney) >= 2){
+      // console.log(`\n\n开始花费2元红包兑换200京豆，一周可换五次`)
+      // for (let item of ["-1", "0", "1", "2", "3"]) {
+        // $.canLoop = true;
+        // if ($.canLoop) {
+          // for (let i = 0; i < 5; i++) {
+            // await exchange2(item);//兑换200京豆(2元红包换200京豆，一周5次。)
+          // }
+          // if (!$.canLoop) {
+            // console.log(`已找到符合的兑换条件，跳出\n`);
+            // break
+          // }
+        // }
+      // }
+      // if ($.exchangeBeanNum) {
+        // message += `兑换京豆成功，获得${$.exchangeBeanNum * 100}京豆\n`;
+      // }
+    // }else{
+      // console.log(`\n\n现金不够2元，不进行兑换200京豆，`)
+    // }
+  // }
   await index(true)
   await showMsg()
 }
@@ -178,15 +178,6 @@ function index(info=false) {
 }
 async function helpFriends() {
   $.canHelp = true
-  if (helpAuthor && $.authorCode) {
-    for(let helpInfo of $.authorCode){
-      console.log(`去帮助好友${helpInfo['inviteCode']}`)
-      await helpFriend(helpInfo)
-      if(!$.canHelp) break
-      await $.wait(1000)
-    }
-  }
- 
   for (let code of $.newShareCodes) {
     console.log(`去帮助好友${code['inviteCode']}`)
     await helpFriend(code)
@@ -374,15 +365,19 @@ function readShareCode() {
 function shareCodesFormat() {
   return new Promise(async resolve => {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-    $.newShareCodes = [];
+	$.newShareCodes = [...($.authorCode || [])];
     if ($.shareCodesArr[$.index - 1]) {
-      $.newShareCodes = $.shareCodesArr[$.index - 1].split('@');
+	   let helpShareCodes = $.shareCodesArr[$.index - 1].split('@');
+	   helpShareCodes.forEach(element => {
+			if( $.newShareCodes.indexOf(element) == -1){
+			  $.newShareCodes.push(element);
+			}
+		});	
+	  
     } else {
       console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
       $.newShareCodes = inviteCodes[tempIndex].split('@');
-      let authorCode = deepCopy($.authorCode)
-      $.newShareCodes = [...(authorCode.map((item, index) => authorCode[index] = item['inviteCode'])), ...$.newShareCodes];
     }
     /* const readShareCodeRes = await readShareCode();
     if (readShareCodeRes && readShareCodeRes.code === 200) {
