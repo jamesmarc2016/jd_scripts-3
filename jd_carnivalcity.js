@@ -62,7 +62,7 @@ let nowTime = new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*
     return
   }
   await updateShareCodesCDN();
-  // await requireConfig();
+   await requireConfig();
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -111,7 +111,7 @@ let nowTime = new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*
   if (allMessage) {
     //NODE端,默认每月一日运行进行推送通知一次
     if ($.isNode()) {
-      await notify.sendNotify($.name, allMessage, { url: JD_API_HOST });
+	await notify.sendNotify($.name, allMessage, { url: "https://carnivalcity.m.jd.com" });
       $.msg($.name, '', allMessage);
     }
   }
@@ -129,7 +129,7 @@ async function JD818() {
     await supportList();//助力情况
     await getHelp();//获取邀请码
     if ($.blockAccount) return
-    await indexInfo(true);//获取任务
+    //await indexInfo(true);//获取任务
     await doHotProducttask();//做热销产品任务
     await doBrandTask();//做品牌手机任务
     await doBrowseshopTask();//逛好货街，做任务
@@ -519,7 +519,7 @@ function myRank() {
 //领取往期奖励API
 function saveJbean(date) {
   return new Promise(resolve => {
-    const body = "date=" + date;
+    const body = {"date":`${date}`};
     const options = taskPostUrl('/khc/rank/getRankJingBean', body)
     $.post(options, (err, resp, data) => {
       try {
@@ -554,7 +554,7 @@ async function doHelp() {
   }
 }
 //助力API
-function toHelp(code = "0e9fb7a0-69ac-41ec-bcd8-458c627d142e") { 
+function toHelp(code = "42c44b47-741f-42a0-8ee7-edd2f9ac866e") { 
   return new Promise(resolve => {
     const body = {"shareId":`${code}`};
     const options = taskPostUrl('/khc/task/doSupport', body)
@@ -596,7 +596,7 @@ function getHelp() {
             $.temp.push(data.data.shareId);
           } else {
             console.log(`获取邀请码失败：${JSON.stringify(data)}`);
-            if (data.code === 1002) $.blockAccount = true;
+            if (data.code === 1002 || data.code === 1001) $.blockAccount = true;
           }
         }
       } catch (e) {
@@ -723,6 +723,51 @@ function updateShareCodesCDN(url = 'https://raw.githubusercontent.com/FearNoManB
   })
 }
 
+						  
+function readShareCode() {
+  console.log(`开始`)
+  return new Promise(async resolve => {
+    $.get({url: `https://jd.smiek.tk/info_carnivalcity`, 'timeout': 20000}, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (data) {
+            data = JSON.parse(data);
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+    await $.wait(20000);
+    resolve()
+  })
+}			   
+							 
+									   
+												
+						 
+									   
+																
+			
+			  
+		   
+ 
+   
+  
+   
+			
+																													  
+																								
+																						  
+																																		
+	 
+												   
+															
 //格式化助力码
 function shareCodesFormat() {
   return new Promise(async resolve => {
@@ -742,11 +787,42 @@ function shareCodesFormat() {
       // const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
       // $.newShareCodes = inviteCodes[tempIndex] && inviteCodes[tempIndex].split('@') || [];
       // if ($.updatePkActivityIdRes && $.updatePkActivityIdRes.length) $.newShareCodes = [...$.updatePkActivityIdRes, ...$.newShareCodes];
+															
+						 
+					 
 	   $.newShareCodes = [...$.updatePkActivityIdRes];
     }
+												
     resolve();
   })
 }
+function requireConfig() {
+  return new Promise(resolve => {
+    console.log(`开始获取${$.name}配置文件\n`);
+    let shareCodes = [];
+    if ($.isNode()) {
+      if (process.env.JD818_SHARECODES) {
+        if (process.env.JD818_SHARECODES.indexOf('\n') > -1) {
+          shareCodes = process.env.JD818_SHARECODES.split('\n');
+        } else {
+          shareCodes = process.env.JD818_SHARECODES.split('&');
+        }
+      }
+    }
+    console.log(`共${cookiesArr.length}个京东账号\n`);
+    $.shareCodesArr = [];
+    if ($.isNode()) {
+      Object.keys(shareCodes).forEach((item) => {
+        if (shareCodes[item]) {
+          $.shareCodesArr.push(shareCodes[item])
+        }
+      })
+    }
+    console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
+    resolve()
+  })
+}					  
+				
 
 function taskPostUrl(a,t = {}) {
   const body = $.toStr({...t,"apiMapping":`${a}`})
@@ -770,9 +846,9 @@ function taskPostUrl(a,t = {}) {
 
 async function showMsg() {
   if ($.beans) {
-    allMessage += `京东账号${$.index} ${$.nickName || $.UserName}\n本次运行获得：${$.beans}京豆\n${message}活动地址：https://carnivalcity.m.jd.com/#/home?shareId=ddd345fb-57bb-4ece-968b-7bf4c92be7cc&t=${Date.now()}${$.index !== cookiesArr.length ? '\n\n' : ''}`
+    allMessage += `京东账号${$.index} ${$.nickName || $.UserName}\n本次运行获得：${$.beans}京豆\n${message}活动地址：https://carnivalcity.m.jd.com${$.index !== cookiesArr.length ? '\n\n' : ''}`
   }
-  $.msg($.name, `京东账号${$.index} ${$.nickName || $.UserName}`, `${message}具体详情点击弹窗跳转后即可查看`, {"open-url": "https://carnivalcity.m.jd.com/#/home?shareId=ddd345fb-57bb-4ece-968b-7bf4c92be7cc&t="+Date.now()});
+  $.msg($.name, `京东账号${$.index} ${$.nickName || $.UserName}`, `${message}具体详情点击弹窗跳转后即可查看`, {"open-url": "https://carnivalcity.m.jd.com"});
 }
 
 function getUA(){
