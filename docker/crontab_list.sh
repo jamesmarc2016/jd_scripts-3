@@ -31,6 +31,8 @@
 0 1 * * * node /scripts/jd_ryhxj.js >> /scripts/logs/jd_ryhxj.log 2>&1
 #手机狂欢
 0 12,16,20 9-28 8 *  node /scripts/jd_carnivalcity.js >> /scripts/logs/jd_carnivalcity.log 2>&1 
+#活动路径  手机馆---》IQOO大牌日---〉左下角金机馆
+33 4,7 8-20 8 * node /scripts/jd_golden_machine.js >> /scripts/logs/jd_golden_machine.log 2>&1 
 ##############长期活动##############
 # 签到
 7 0,8,20 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
