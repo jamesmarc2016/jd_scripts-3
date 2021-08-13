@@ -37,6 +37,8 @@
 33 4,7 8-20 8 * node /scripts/jd_golden_machine.js >> /scripts/logs/jd_golden_machine.log 2>&1 
 #来电好物季
 10 0 * * * node /scripts/jd_ldhwj.js.js >> /scripts/logs/jd_ldhwj.log 2>&1 
+#汽车生活节
+30 9,21 12-20 8 * node /scripts/jd_qcshj.js.js >> /scripts/logs/jd_qcshj.log 2>&1 
 ##############长期活动##############
 # 签到
 7 0,8,20 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
