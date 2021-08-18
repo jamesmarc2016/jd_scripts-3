@@ -6,21 +6,17 @@
 #金榜创造营 活动时间：2021-05-21至2021-12-31
 5 1,22 * * * node /scripts/jd_gold_creator.js >> /scripts/logs/jd_gold_creator.log 2>&1
 #5G超级盲盒(活动时间：2021-06-2到2021-07-31)
-#0 0-23/4 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
+0 0-23/4 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
 #京东极速版红包(活动时间：2021-5-5至2021-5-31)
 45 0,10,18,23 * * * node /scripts/jd_speed_redpocke.js >> /scripts/logs/jd_speed_redpocke.log 2>&1
 #女装盲盒 2021-7-1至2021-7-31
-#35 1,23 * * * node /scripts/jd_nzmh.js >> /scripts/logs/jd_nzmh.log 2>&1
-#许愿池
-35 8,9 * * * node /scripts/jd_wishingPool.js >> /scripts/logs/jd_wishingPool.log 2>&1
+35 1,23 * * * node /scripts/jd_nzmh.js >> /scripts/logs/jd_nzmh.log 2>&1
 #送豆得豆
 45 8 * * * node /scripts/jd_sendBeans.js >> /scripts/logs/jd_sendBeans.log 2>&1
 #省钱大赢家之翻翻乐 7.15-8.15
 20 * * * * node /scripts/jd_big_winner.js >> /scripts/logs/jd_big_winner.log 2>&1
 #零食街 6.20-12.31
 18 7,20 * * * node /scripts/jd_foodRunning.js >> /scripts/logs/jd_foodRunning.log 2>&1 
-#全民摸冰
-6  9,12 * * * node /scripts/jd_mb.js >> /scripts/logs/jd_mb.log 2>&1 
 #特务z
 23 8,9 * * * node /scripts/jd_productZBrand.js >> /scripts/logs/jd_productZBrand.log 2>&1 
 #店铺签到
@@ -62,10 +58,6 @@
 0 0-23/4 * * * node /scripts/jd_cash.js >> /scripts/logs/jd_cash.log 2>&1
 #财富岛
 5 * * * * node /scripts/jd_cfd.js >> /scripts/logs/jd_cfd.log 2>&1
-#财富岛气球
-15 */8 * * * node /scripts/jd_cfd_loop.js >> /scripts/logs/jd_cfd_loop.log 2>&1 
-#财富岛体现
-59 23 * * * node /scripts/jd_cfdtx.js >> /scripts/logs/jd_cfdtx.log 2>&1
 #摇京豆
 2 0,23 * * * node /scripts/jd_club_lottery.js >> /scripts/logs/jd_club_lottery.log 2>&1
 #天天提鹅
@@ -94,8 +86,6 @@
 13 1,9,22 * * * node /scripts/jd_health.js >> /scripts/logs/jd_health.log 2>&1
 #京东健康社区收集健康能量
 15 6-18/2 * * * node /scripts/jd_health_collect.js >> /scripts/logs/jd_health_collect.log 2>&1
-#京东健康社区兑换 需要变量 HEALTH_EXCHANGE 兑换奖品名称 20是20京东，药品为药品名称
-15 6-18/2 * * * node /scripts/jd_health_exchange.js >> /scripts/logs/jd_health_exchange.log 2>&1
 #东东工厂
 13 * * * * node /scripts/jd_jdfactory.js >> /scripts/logs/jd_jdfactory.log 2>&1
 #京东赚赚
@@ -116,8 +106,6 @@
 58 23 * * * node /scripts/jd_joy_reward_auth.js >> /scripts/logs/jd_joy_reward_auth.log 2>&1 
 #宠汪汪偷好友积分与狗粮
 10 0-21/3 * * * node /scripts/jd_joy_steal.js >> /scripts/logs/jd_joy_steal.log 2>&1
-#跳跳乐瓜分京豆
-#1 0,11,21 * * * node /scripts/jd_jump.js >> /scripts/logs/jd_jump.log 2>&1
 #京小鸽吾悦寄
 1 6,11,18 * * * node /scripts/jd_jxg.js >> /scripts/logs/jd_jxg.log 2>&1
 #京喜牧场
@@ -144,8 +132,6 @@
 12 0-23/6 * * * node /scripts/jd_pigPet.js >> /scripts/logs/jd_pigPet.log 2>&1
 #京东种豆得豆
 1 7-21/2 * * * node /scripts/jd_plantBean.js >> /scripts/logs/jd_plantBean.log 2>&1 
-#京东保价
-0 2 * * * node /scripts/jd_price.js >> /scripts/logs/jd_price.log 2>&1
 #星系牧场
 1 0-23/2 * * * node /scripts/jd_qqxing.js >> /scripts/logs/jd_qqxing.log 2>&1
 # 京东排行榜
