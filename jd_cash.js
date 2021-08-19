@@ -83,11 +83,11 @@ async function jdCash() {
   $.signMoney = 0;
   await index()
   await shareCodesFormat()
-  //await helpFriends()
+  await helpFriends()
   await getReward()
   await getReward('2');
-  // $.exchangeBeanNum = 0;
-  // cash_exchange = $.isNode() ? (process.env.CASH_EXCHANGE ? process.env.CASH_EXCHANGE : `${cash_exchange}`) : ($.getdata('cash_exchange') ? $.getdata('cash_exchange') : `${cash_exchange}`);
+  $.exchangeBeanNum = 0;
+  cash_exchange = $.isNode() ? (process.env.CASH_EXCHANGE ? process.env.CASH_EXCHANGE : `${cash_exchange}`) : ($.getdata('cash_exchange') ? $.getdata('cash_exchange') : `${cash_exchange}`);
   // if (cash_exchange === 'true') {
     // if(Number($.signMoney) >= 2){
       // console.log(`\n\n开始花费2元红包兑换200京豆，一周可换五次`)
