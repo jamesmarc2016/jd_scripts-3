@@ -35,6 +35,8 @@
 10 0 * * * node /scripts/jd_ldhwj.js.js >> /scripts/logs/jd_ldhwj.log 2>&1 
 #汽车生活节
 30 9,21 12-20 8 * node /scripts/jd_qcshj.js.js >> /scripts/logs/jd_qcshj.log 2>&1 
+# 工业品抽奖机
+5 0 * * * node /scripts/jd_industryLottery.js >> /scripts/logs/jd_industryLottery.log 2>&1
 ##############长期活动##############
 # 签到
 7 0,8,20 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
