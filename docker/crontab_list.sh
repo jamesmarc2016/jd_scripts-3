@@ -21,8 +21,6 @@
 23 8,9 * * * node /scripts/jd_productZBrand.js >> /scripts/logs/jd_productZBrand.log 2>&1 
 #店铺签到
 0 0 * * * node /scripts/jd_dpqd.js >> /scripts/logs/jd_dpqd.log 2>&1
-#8.4-8.15 七夕情报局🐶
-36 0,10,21 4-15 8 *  node /scripts/jd_doge.js >> /scripts/logs/jd_doge.log 2>&1
 #荣耀焕新季
 0 1 * * * node /scripts/jd_ryhxj.js >> /scripts/logs/jd_ryhxj.log 2>&1
 #手机狂欢
@@ -37,6 +35,8 @@
 30 9,21 12-20 8 * node /scripts/jd_qcshj.js.js >> /scripts/logs/jd_qcshj.log 2>&1 
 # 工业品抽奖机
 5 0 * * * node /scripts/jd_industryLottery.js >> /scripts/logs/jd_industryLottery.log 2>&1
+#众筹许愿池
+40 0,2 * * * node /scripts/jd_wish.js >> /scripts/logs/jd_wish.log 2>&1
 ##############长期活动##############
 # 签到
 7 0,8,20 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
