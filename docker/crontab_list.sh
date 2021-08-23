@@ -160,3 +160,5 @@
 21 9 * * * node /scripts/jd_gua_MMdou.js >> /scripts/logs/jd_gua_MMdou.log 2>&1
 #京喜签到
 20 1 * * * node /scripts/jx_sign.js >> /scripts/logs/jx_sign.log 2>&1
+#领劵中心
+15 0 * * * node /scripts/jd_ccSign.js >> /scripts/logs/jd_ccSign.log 2>&1
