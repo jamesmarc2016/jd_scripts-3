@@ -489,7 +489,7 @@ function taskList(ac) {
   console.log(`账号${ac.index}:开始解锁宠汪汪封印~`)
   return new Promise(resolve => {
     $.get({
-      url: `https://jdjoy.jd.com/common/pet/getPetTaskConfig?reqSource=h5&invokeKey=ztmFUCxcPMNyUq0P`,
+      url: `https://jdjoy.jd.com/common/pet/getPetTaskConfig?reqSource=h5&invokeKey=RtKLB8euDo7KwsO0`,
       headers: {
         'Host': 'jdjoy.jd.com',
         'accept': '*/*',
