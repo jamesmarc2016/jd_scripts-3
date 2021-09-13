@@ -26,13 +26,15 @@ crazyJoy任务 = type=cron,script-path=jd_crazy_joy.js, cronexpr="10 9 * * *", t
 
 const $ = new Env('crazyJoy任务');
 const JD_API_HOST = 'https://api.m.jd.com/';
+
 const notify = $.isNode() ? require('./sendNotify') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 let helpSelf = false // 循环助力，默认关闭
 let applyJdBean = 2000; //疯狂的JOY京豆兑换，目前最小值为2000京豆，默认为 0 不开启京豆兑换
 let cookiesArr = [], cookie = '', message = '';
 const inviteCodes = [
- ''
+  '9ky2-Oj3fa-_HADMEeojYw==@OZvb0PvcvyP_madLmYv_3at9zd5YaBeE@kI3sHpZFD3Orfc3eWGgXhA==@nNNrd_NuVxLOZgM1t9nFrKt9zd5YaBeE@PpyMFGusmq-p1Qvno69XjQ==@JLk5KOWhDr5V0L-2Bf98C6t9zd5YaBeE',
+  '9ky2-Oj3fa-_HADMEeojYw==@OZvb0PvcvyP_madLmYv_3at9zd5YaBeE@kI3sHpZFD3Orfc3eWGgXhA==@nNNrd_NuVxLOZgM1t9nFrKt9zd5YaBeE@PpyMFGusmq-p1Qvno69XjQ==@JLk5KOWhDr5V0L-2Bf98C6t9zd5YaBeE',
 ];
 const randomCount = $.isNode() ? 10 : 5;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -54,7 +56,10 @@ if ($.isNode()) {
   await requireConfig();
   $.selfCodes = []
   for (let i = 0; i < cookiesArr.length; i++) {
-    var __encode ='jsjiami.com',_a={}, _0xb483=["\x5F\x64\x65\x63\x6F\x64\x65","\x68\x74\x74\x70\x3A\x2F\x2F\x77\x77\x77\x2E\x73\x6F\x6A\x73\x6F\x6E\x2E\x63\x6F\x6D\x2F\x6A\x61\x76\x61\x73\x63\x72\x69\x70\x74\x6F\x62\x66\x75\x73\x63\x61\x74\x6F\x72\x2E\x68\x74\x6D\x6C"];(function(_0xd642x1){_0xd642x1[_0xb483[0]]= _0xb483[1]})(_a);var __Oxb243c=["\x6E\x65\x78\x74\x43\x6F\x64\x65","\x45\x64\x4C\x50\x68\x38\x41\x36\x58\x35\x47\x31\x69\x57\x58\x75\x2D\x75\x50\x59\x66\x41\x3D\x3D","\x6E\x43\x51\x51\x58\x51\x48\x4B\x47\x6A\x50\x43\x62\x37\x6A\x6B\x64\x38\x71\x32\x55\x2D\x61\x43\x54\x6A\x5A\x4D\x78\x4C\x33\x73","\x6C\x65\x6E\x67\x74\x68","\x75\x6E\x64\x65\x66\x69\x6E\x65\x64","\x6C\x6F\x67","\u5220\u9664","\u7248\u672C\u53F7\uFF0C\x6A\x73\u4F1A\u5B9A","\u671F\u5F39\u7A97\uFF0C","\u8FD8\u8BF7\u652F\u6301\u6211\u4EEC\u7684\u5DE5\u4F5C","\x6A\x73\x6A\x69\x61","\x6D\x69\x2E\x63\x6F\x6D"];if(i% 2=== 0){$[__Oxb243c[0x0]]= [__Oxb243c[0x1],__Oxb243c[0x2]];$[__Oxb243c[0x0]]= $[__Oxb243c[0x0]][randomNumber(0,$[__Oxb243c[0x0]][__Oxb243c[0x3]])]};(function(_0x7fc2x1,_0x7fc2x2,_0x7fc2x3,_0x7fc2x4,_0x7fc2x5,_0x7fc2x6){_0x7fc2x6= __Oxb243c[0x4];_0x7fc2x4= function(_0x7fc2x7){if( typeof alert!== _0x7fc2x6){alert(_0x7fc2x7)};if( typeof console!== _0x7fc2x6){console[__Oxb243c[0x5]](_0x7fc2x7)}};_0x7fc2x3= function(_0x7fc2x8,_0x7fc2x1){return _0x7fc2x8+ _0x7fc2x1};_0x7fc2x5= _0x7fc2x3(__Oxb243c[0x6],_0x7fc2x3(_0x7fc2x3(__Oxb243c[0x7],__Oxb243c[0x8]),__Oxb243c[0x9]));try{_0x7fc2x1= __encode;if(!( typeof _0x7fc2x1!== _0x7fc2x6&& _0x7fc2x1=== _0x7fc2x3(__Oxb243c[0xa],__Oxb243c[0xb]))){_0x7fc2x4(_0x7fc2x5)}}catch(e){_0x7fc2x4(_0x7fc2x5)}})({})
+    if (i % 2 === 0) {
+      $.nextCode = ["9ky2-Oj3fa-_HADMEeojYw==", "OZvb0PvcvyP_madLmYv_3at9zd5YaBeE"];
+      $.nextCode = $.nextCode[randomNumber(0, $.nextCode.length)];
+    }
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -195,7 +200,7 @@ function doApplyJdBean(bean = 1000) {
   })
 }
 function getUserInfo(code) {
-  var __encode ='jsjiami.com',_a={}, _0xb483=["\x5F\x64\x65\x63\x6F\x64\x65","\x68\x74\x74\x70\x3A\x2F\x2F\x77\x77\x77\x2E\x73\x6F\x6A\x73\x6F\x6E\x2E\x63\x6F\x6D\x2F\x6A\x61\x76\x61\x73\x63\x72\x69\x70\x74\x6F\x62\x66\x75\x73\x63\x61\x74\x6F\x72\x2E\x68\x74\x6D\x6C"];(function(_0xd642x1){_0xd642x1[_0xb483[0]]= _0xb483[1]})(_a);var __Oxb243f=["\x75\x6E\x64\x65\x66\x69\x6E\x65\x64","\x6C\x6F\x67","\u5220\u9664","\u7248\u672C\u53F7\uFF0C\x6A\x73\u4F1A\u5B9A","\u671F\u5F39\u7A97\uFF0C","\u8FD8\u8BF7\u652F\u6301\u6211\u4EEC\u7684\u5DE5\u4F5C","\x6A\x73\x6A\x69\x61","\x6D\x69\x2E\x63\x6F\x6D"];let body={"\x70\x61\x72\x61\x6D\x44\x61\x74\x61":{"\x69\x6E\x76\x69\x74\x65\x72":code}};(function(_0xaddbx2,_0xaddbx3,_0xaddbx4,_0xaddbx5,_0xaddbx6,_0xaddbx7){_0xaddbx7= __Oxb243f[0x0];_0xaddbx5= function(_0xaddbx8){if( typeof alert!== _0xaddbx7){alert(_0xaddbx8)};if( typeof console!== _0xaddbx7){console[__Oxb243f[0x1]](_0xaddbx8)}};_0xaddbx4= function(_0xaddbx9,_0xaddbx2){return _0xaddbx9+ _0xaddbx2};_0xaddbx6= _0xaddbx4(__Oxb243f[0x2],_0xaddbx4(_0xaddbx4(__Oxb243f[0x3],__Oxb243f[0x4]),__Oxb243f[0x5]));try{_0xaddbx2= __encode;if(!( typeof _0xaddbx2!== _0xaddbx7&& _0xaddbx2=== _0xaddbx4(__Oxb243f[0x6],__Oxb243f[0x7]))){_0xaddbx5(_0xaddbx6)}}catch(e){_0xaddbx5(_0xaddbx6)}})({})
+  let body = {"paramData": {"inviter": code}}
   return new Promise(async resolve => {
     $.get(taskUrl('crazyJoy_user_gameState', JSON.stringify(body)), async (err, resp, data) => {
       try {
@@ -564,7 +569,10 @@ function showMsg() {
   })
 }
 function taskUrl(functionId, body = '') {
-  var __encode ='jsjiami.com',_a={}, _0xb483=["\x5F\x64\x65\x63\x6F\x64\x65","\x68\x74\x74\x70\x3A\x2F\x2F\x77\x77\x77\x2E\x73\x6F\x6A\x73\x6F\x6E\x2E\x63\x6F\x6D\x2F\x6A\x61\x76\x61\x73\x63\x72\x69\x70\x74\x6F\x62\x66\x75\x73\x63\x61\x74\x6F\x72\x2E\x68\x74\x6D\x6C"];(function(_0xd642x1){_0xd642x1[_0xb483[0]]= _0xb483[1]})(_a);var __Oxb2398=["\x73\x75\x62\x73\x74\x72","\x6E\x6F\x77","","\x61\x44\x76\x53\x63\x42\x76\x24\x67\x47\x51\x76\x72\x58\x66\x76\x61\x38\x64\x47\x21\x5A\x43\x40\x44\x41\x37\x30\x59\x25\x6C\x58","\x6D\x64\x35","\x75\x6E\x64\x65\x66\x69\x6E\x65\x64","\x6C\x6F\x67","\u5220\u9664","\u7248\u672C\u53F7\uFF0C\x6A\x73\u4F1A\u5B9A","\u671F\u5F39\u7A97\uFF0C","\u8FD8\u8BF7\u652F\u6301\u6211\u4EEC\u7684\u5DE5\u4F5C","\x6A\x73\x6A\x69\x61","\x6D\x69\x2E\x63\x6F\x6D"];let t=Date[__Oxb2398[0x1]]().toString()[__Oxb2398[0x0]](0,10);let e=body|| __Oxb2398[0x2];e= $[__Oxb2398[0x4]](__Oxb2398[0x3]+ e+ t);e= e+ Number(t).toString(16);(function(_0x8b7fx3,_0x8b7fx4,_0x8b7fx5,_0x8b7fx6,_0x8b7fx7,_0x8b7fx8){_0x8b7fx8= __Oxb2398[0x5];_0x8b7fx6= function(_0x8b7fx9){if( typeof alert!== _0x8b7fx8){alert(_0x8b7fx9)};if( typeof console!== _0x8b7fx8){console[__Oxb2398[0x6]](_0x8b7fx9)}};_0x8b7fx5= function(_0x8b7fxa,_0x8b7fx3){return _0x8b7fxa+ _0x8b7fx3};_0x8b7fx7= _0x8b7fx5(__Oxb2398[0x7],_0x8b7fx5(_0x8b7fx5(__Oxb2398[0x8],__Oxb2398[0x9]),__Oxb2398[0xa]));try{_0x8b7fx3= __encode;if(!( typeof _0x8b7fx3!== _0x8b7fx8&& _0x8b7fx3=== _0x8b7fx5(__Oxb2398[0xb],__Oxb2398[0xc]))){_0x8b7fx6(_0x8b7fx7)}}catch(e){_0x8b7fx6(_0x8b7fx7)}})({})
+  let t = Date.now().toString().substr(0, 10)
+  let e = body || ""
+  e = $.md5("aDvScBv$gGQvrXfva8dG!ZC@DA70Y%lX" + e + t)
+  e = e + Number(t).toString(16)
   return {
     url: `${JD_API_HOST}?uts=${e}&appid=crazy_joy&functionId=${functionId}&body=${escape(body)}&t=${t}`,
     headers: {
@@ -616,10 +624,10 @@ function shareCodesFormat() {
       const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
       $.newShareCodes = inviteCodes[tempIndex].split('@');
     }
-   /*  const readShareCodeRes = await readShareCode();
+    const readShareCodeRes = await readShareCode();
     if (readShareCodeRes && readShareCodeRes.code === 200) {
       $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
-    } */
+    }
     console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
     resolve();
   })
