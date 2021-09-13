@@ -33,9 +33,9 @@ let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, n
 //下面给出两个账号的填写示例（iOS只支持2个京东账号）
 let shareCodes = [ // 这个列表填入你要助力的好友的shareCode
   //账号一的好友shareCode,不同好友的shareCode中间用@符号隔开
-  '5853550f71014282912b76d95beb84c0@b58ddba3317b44ceb0ac86ea8952998c@8d724eb95e3847b6a1526587d1836f27@a80b7d1db41a4381b742232da9d22443@ce107b8f64d24f62a92292180f764018@c73ea563a77d4464b273503d3838fec1@0dd9a7fd1feb449fb1bf854a3ec0e801',
+  '666a4463748a40118e516d4b4e4511b2@1dab435e747f415dbf3d49f6edfb9dc9@579adb878eb3427da879df87da64c7b8@a4942c3036004c6eb7ec31bdc59a6db1@0994d0619e374009aaccdc398a8700aa',
   //账号二的好友shareCode,不同好友的shareCode中间用@符号隔开
-  '5853550f71014282912b76d95beb84c0@b58ddba3317b44ceb0ac86ea8952998c@8d724eb95e3847b6a1526587d1836f27@a80b7d1db41a4381b742232da9d22443@ce107b8f64d24f62a92292180f764018@c73ea563a77d4464b273503d3838fec1@0dd9a7fd1feb449fb1bf854a3ec0e801',
+  '666a4463748a40118e516d4b4e4511b2@1dab435e747f415dbf3d49f6edfb9dc9@579adb878eb3427da879df87da64c7b8@a4942c3036004c6eb7ec31bdc59a6db1@0994d0619e374009aaccdc398a8700aa',
 ]
 let message = '', subTitle = '', option = {}, isFruitFinished = false;
 const retainWater = 100;//保留水滴大于多少g,默认100g;
@@ -720,7 +720,7 @@ async function executeWaterRains() {
       if (Date.now() < ($.farmTask.waterRainInit.lastTime + 3 * 60 * 60 * 1000)) {
         executeWaterRain = false;
         // message += `【第${$.farmTask.waterRainInit.winTimes + 1}次水滴雨】未到时间，请${new Date($.farmTask.waterRainInit.lastTime + 3 * 60 * 60 * 1000).toLocaleTimeString()}再试\n`;
-        console.log(`\`【第${$.farmTask.waterRainInit.winTimes + 1}次水滴雨】未到时间，请${new Date($.farmTask.waterRainInit.lastTime + 3 * 60 * 60 * 1000).toLocaleTimeString()}再试\n`);
+        console.log(`【第${$.farmTask.waterRainInit.winTimes + 1}次水滴雨】未到时间，请${new Date($.farmTask.waterRainInit.lastTime + 3 * 60 * 60 * 1000).toLocaleTimeString()}再试\n`);
       }
     }
     if (executeWaterRain) {
@@ -1301,13 +1301,23 @@ function readShareCode() {
 function shareCodesFormat() {
   return new Promise(async resolve => {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-    newShareCodes = [];
+    newShareCodes = [...($.authorCode || [])];
     if ($.shareCodesArr[$.index - 1]) {
-      newShareCodes = $.shareCodesArr[$.index - 1].split('@');
+     let helpShareCodes = $.shareCodesArr[$.index - 1].split('@');
+	  helpShareCodes.forEach(element => {
+			if( newShareCodes.indexOf(element) == -1){
+			  newShareCodes.push(element);
+			}
+		});
     } else {
       console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
-      newShareCodes = shareCodes[tempIndex].split('@');
+		let helpShareCodes = shareCodes[tempIndex].split('@');
+		helpShareCodes.forEach(element => {
+			if( newShareCodes.indexOf(element) == -1){
+			  newShareCodes.push(element);
+			}
+		});
     }
     const readShareCodeRes = await readShareCode();
     if (readShareCodeRes && readShareCodeRes.code === 200) {
@@ -1319,7 +1329,7 @@ function shareCodesFormat() {
   })
 }
 function requireConfig() {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     console.log('开始获取配置文件\n')
     notify = $.isNode() ? require('./sendNotify') : '';
     //Node.js用户请在jdCookie.js处填写京东ck;
@@ -1351,6 +1361,12 @@ function requireConfig() {
     // console.log(`$.shareCodesArr::${JSON.stringify($.shareCodesArr)}`)
     // console.log(`jdFruitShareArr账号长度::${$.shareCodesArr.length}`)
     console.log(`您提供了${$.shareCodesArr.length}个账号的农场助力码\n`);
+	$.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_fruit.json')
+	if (!$.authorCode) {
+		$.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_fruit.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+		await $.wait(1000)
+		$.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_fruit.json') || []
+	}
     resolve()
   })
 }
@@ -1392,6 +1408,41 @@ function TotalBean() {
         $.logErr(e)
       } finally {
         resolve();
+      }
+    })
+  })
+}
+function getAuthorShareCode(url) {
+  return new Promise(resolve => {
+    const options = {
+      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }
+    };
+    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
+      const tunnel = require("tunnel");
+      const agent = {
+        https: tunnel.httpsOverHttp({
+          proxy: {
+            host: process.env.TG_PROXY_HOST,
+            port: process.env.TG_PROXY_PORT * 1
+          }
+        })
+      }
+      Object.assign(options, { agent })
+    }
+    $.get(options, async (err, resp, data) => {
+      try {
+        if (err) {
+          // console.log(`${JSON.stringify(err)}`)
+          // console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (data) data = JSON.parse(data)
+        }
+      } catch (e) {
+        // $.logErr(e, resp)
+      } finally {
+        resolve(data);
       }
     })
   })

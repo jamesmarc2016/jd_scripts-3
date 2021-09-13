@@ -24,9 +24,9 @@ const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
 const notify = $.isNode() ? require('./sendNotify') : "";
 let cookiesArr = [], cookie = "", allMessage = "", message;
 const inviteCodes = [
-  `T0225KkcRh9P9FbRKUygl_UJcgCjVfnoaW5kRrbA@T0159KUiH11Mq1bSKBoCjVfnoaW5kRrbA`,
-  `T0225KkcRh9P9FbRKUygl_UJcgCjVfnoaW5kRrbA@T0159KUiH11Mq1bSKBoCjVfnoaW5kRrbA`,
-  `T0225KkcRh9P9FbRKUygl_UJcgCjVfnoaW5kRrbA@T0159KUiH11Mq1bSKBoCjVfnoaW5kRrbA`,
+  `T0225KkcRRcdoVWCdUumxaFeJwCjVfnoaW5kRrbA@T0225KkcRxcb8lXTJ0z0lPEIIQCjVfnoaW5kRrbA`,
+  `T0225KkcRRcdoVWCdUumxaFeJwCjVfnoaW5kRrbA@T0225KkcRxcb8lXTJ0z0lPEIIQCjVfnoaW5kRrbA`,
+  `T0225KkcRRcdoVWCdUumxaFeJwCjVfnoaW5kRrbA@T0225KkcRxcb8lXTJ0z0lPEIIQCjVfnoaW5kRrbA`,
 ]
 let reward = $.isNode() ? (process.env.JD_HEALTH_REWARD_NAME ? process.env.JD_HEALTH_REWARD_NAME : '') : ($.getdata('JD_HEALTH_REWARD_NAME') ? $.getdata('JD_HEALTH_REWARD_NAME') : '');
 const randomCount = $.isNode() ? 20 : 5;
@@ -377,14 +377,27 @@ function readShareCode() {
 function shareCodesFormat() {
   return new Promise(async resolve => {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-    $.newShareCodes = [];
+	
+	
+	$.newShareCodes = [...($.authorCode || [])];
     if ($.shareCodesArr[$.index - 1]) {
-      $.newShareCodes = $.shareCodesArr[$.index - 1].split('@');
+     let helpShareCodes = $.shareCodesArr[$.index - 1].split('@');
+	  helpShareCodes.forEach(element => {
+			if( $.newShareCodes.indexOf(element) == -1){
+			  $.newShareCodes.push(element);
+			}
+		});
     } else {
       console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
-      const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
-      $.newShareCodes = inviteCodes[tempIndex].split('@');
+      const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
+		let helpShareCodes = shareCodes[tempIndex].split('@');
+		helpShareCodes.forEach(element => {
+			if( $.newShareCodes.indexOf(element) == -1){
+			  $.newShareCodes.push(element);
+			}
+		});
     }
+
     const readShareCodeRes = await readShareCode();
     if (readShareCodeRes && readShareCodeRes.code === 200) {
       $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
@@ -418,7 +431,49 @@ function requireConfig() {
       })
     }
     console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
+	$.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_health.json')
+	if (!$.authorCode) {
+		$.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_health.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+		await $.wait(1000)
+		$.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_health.json') || []
+	}
     resolve()
+  })
+}
+
+function getAuthorShareCode(url) {
+  return new Promise(resolve => {
+    const options = {
+      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }
+    };
+    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
+      const tunnel = require("tunnel");
+      const agent = {
+        https: tunnel.httpsOverHttp({
+          proxy: {
+            host: process.env.TG_PROXY_HOST,
+            port: process.env.TG_PROXY_PORT * 1
+          }
+        })
+      }
+      Object.assign(options, { agent })
+    }
+    $.get(options, async (err, resp, data) => {
+      try {
+        if (err) {
+          // console.log(`${JSON.stringify(err)}`)
+          // console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (data) data = JSON.parse(data)
+        }
+      } catch (e) {
+        // $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
   })
 }
 // prettier-ignore

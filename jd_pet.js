@@ -31,9 +31,9 @@ let cookiesArr = [], cookie = '', jdPetShareArr = [], isBox = false, notify, new
 //下面给出两个账号的填写示例（iOS只支持2个京东账号）
 let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好友的shareCode
   //账号一的好友shareCode,不同好友的shareCode中间用@符号隔开
-  'MTAxODcxOTI2NTAwMDAwMDAyNTE5ODU4OQ==@MTAxODEyMjkyMDAwMDAwMDM5MzI3ODM1@MTE1NDUyMjEwMDAwMDAwMzUyNDI3Njk=@MTE1NDUyMjEwMDAwMDAwMzgxMjgwNjM=@MTE1NDAxNzYwMDAwMDAwMzk2NjQ2MjE=@MTE1NDQ5MzYwMDAwMDAwMzgwNzQxMTc=@MTAxODc2NTE0NzAwMDAwMDAyMTgwNDcwNw==',
+  'MTE1NDQ5OTUwMDAwMDAwNDIxNzc2MDk=@MTE1NDQ5OTUwMDAwMDAwNDM0MDAwNjk=@MTE1NDUwMTI0MDAwMDAwMDQ1MTYzMTcx@MTE1NDUyMjEwMDAwMDAwNDUxNjYzMTM=@MTE1NDQ5OTIwMDAwMDAwNDQ2NzY0ODE=',
   //账号二的好友shareCode,不同好友的shareCode中间用@符号隔开
-  'MTAxODcxOTI2NTAwMDAwMDAyNTE5ODU4OQ==@MTAxODEyMjkyMDAwMDAwMDM5MzI3ODM1@MTE1NDUyMjEwMDAwMDAwMzUyNDI3Njk=@MTE1NDUyMjEwMDAwMDAwMzgxMjgwNjM=@MTE1NDAxNzYwMDAwMDAwMzk2NjQ2MjE=@MTE1NDQ5MzYwMDAwMDAwMzgwNzQxMTc=@MTAxODc2NTE0NzAwMDAwMDAyMTgwNDcwNw==',
+  'MTE1NDQ5OTUwMDAwMDAwNDIxNzc2MDk=@MTE1NDQ5OTUwMDAwMDAwNDM0MDAwNjk=@MTE1NDUwMTI0MDAwMDAwMDQ1MTYzMTcx@MTE1NDUyMjEwMDAwMDAwNDUxNjYzMTM=@MTE1NDQ5OTIwMDAwMDAwNDQ2NzY0ODE=',
 ]
 let message = '', subTitle = '', option = {};
 let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭通知推送
@@ -496,13 +496,23 @@ function readShareCode() {
 function shareCodesFormat() {
   return new Promise(async resolve => {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-    newShareCodes = [];
+    newShareCodes = [...($.authorCode || [])];
     if ($.shareCodesArr[$.index - 1]) {
-      newShareCodes = $.shareCodesArr[$.index - 1].split('@');
+      let helpShareCodes = $.shareCodesArr[$.index - 1].split('@');
+	  helpShareCodes.forEach(element => {
+			if( newShareCodes.indexOf(element) == -1){
+			  newShareCodes.push(element);
+			}
+		});
     } else {
       console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
-      newShareCodes = shareCodes[tempIndex].split('@');
+       let helpShareCodes = shareCodes[tempIndex].split('@');
+	    helpShareCodes.forEach(element => {
+			if( newShareCodes.indexOf(element) == -1){
+			  newShareCodes.push(element);
+			}
+		});
     }
     //因好友助力功能下线。故暂时屏蔽
     const readShareCodeRes = await readShareCode();
@@ -515,7 +525,7 @@ function shareCodesFormat() {
   })
 }
 function requireConfig() {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     console.log('开始获取东东萌宠配置文件\n')
     notify = $.isNode() ? require('./sendNotify') : '';
     //Node.js用户请在jdCookie.js处填写京东ck;
@@ -547,6 +557,12 @@ function requireConfig() {
     // console.log(`$.shareCodesArr::${JSON.stringify($.shareCodesArr)}`)
     // console.log(`jdPetShareArr账号长度::${$.shareCodesArr.length}`)
     console.log(`您提供了${$.shareCodesArr.length}个账号的东东萌宠助力码\n`);
+	$.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_pet.json')
+	if (!$.authorCode) {
+		$.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_pet.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+		await $.wait(1000)
+		$.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_pet.json') || []
+	}
     resolve()
   })
 }
@@ -635,6 +651,41 @@ function taskUrl(function_id, body = {}) {
       'Content-Type': 'application/x-www-form-urlencoded',
     }
   };
+}
+function getAuthorShareCode(url) {
+  return new Promise(resolve => {
+    const options = {
+      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }
+    };
+    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
+      const tunnel = require("tunnel");
+      const agent = {
+        https: tunnel.httpsOverHttp({
+          proxy: {
+            host: process.env.TG_PROXY_HOST,
+            port: process.env.TG_PROXY_PORT * 1
+          }
+        })
+      }
+      Object.assign(options, { agent })
+    }
+    $.get(options, async (err, resp, data) => {
+      try {
+        if (err) {
+          // console.log(`${JSON.stringify(err)}`)
+          // console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (data) data = JSON.parse(data)
+        }
+      } catch (e) {
+        // $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+  })
 }
 function jsonParse(str) {
   if (typeof str == "string") {

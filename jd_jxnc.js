@@ -186,28 +186,13 @@ function requireConfig() {
     // console.log(`jdFruitShareArr::${JSON.stringify(jxncShareCodeArr)}`)
     // console.log(`jdFruitShareArr账号长度::${jxncShareCodeArr.length}`)
     $.log(`您提供了${jxncShareCodeArr.length}个账号的京喜农场助力码`);
-
-    try {
-      let options = {
-        "url": `https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jxnc.txt`,
-        "headers": {
-          "Accept": "application/json,text/plain, */*",
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Accept-Encoding": "gzip, deflate, br",
-          "Accept-Language": "zh-cn",
-          "Connection": "keep-alive",
-          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"
-        },
-        "timeout": 10000,
-      }
-      $.get(options, (err, resp, data) => { // 初始化内置变量
-        if (!err) {
-          shareCode = data;
-        }
-      });
-    } catch (e) {
-      // 获取内置助力码失败
-    }
+	
+	$.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_jxnc.json')
+	if (!$.authorCode) {
+		$.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_jxnc.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+		await $.wait(1000)
+		$.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_jxnc.json') || []
+	}
     resolve()
   })
 }
@@ -271,12 +256,17 @@ function tokenFormat() {
 function shareCodesFormat() {
   return new Promise(async resolve => {
     // console.log(`第${$.index}个京东账号的助力码:::${jdFruitShareArr[$.index - 1]}`)
+	currentShareCode = [...($.authorCode || [])];
     if (jxncShareCodeArr[$.index - 1]) {
-      currentShareCode = jxncShareCodeArr[$.index - 1].split('@');
-      currentShareCode.push(...(shareCode.split('@')));
+		let shareCodes = jxncShareCodeArr[$.index - 1].split('@');
+		shareCodes.forEach(element => {
+			if( currentShareCode.indexOf(element) == -1){
+			  currentShareCode.push(element);
+			}
+		});
+
     } else {
       $.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码`)
-      currentShareCode = shareCode.split('@');
     }
     $.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify(currentShareCode)}`)
     resolve();
@@ -792,6 +782,42 @@ async function requestAlgo() {
     })
   })
 }
+
+function getAuthorShareCode(url) {
+  return new Promise(resolve => {
+    const options = {
+      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }
+    };
+    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
+      const tunnel = require("tunnel");
+      const agent = {
+        https: tunnel.httpsOverHttp({
+          proxy: {
+            host: process.env.TG_PROXY_HOST,
+            port: process.env.TG_PROXY_PORT * 1
+          }
+        })
+      }
+      Object.assign(options, { agent })
+    }
+    $.get(options, async (err, resp, data) => {
+      try {
+        if (err) {
+          // console.log(`${JSON.stringify(err)}`)
+          // console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (data) data = JSON.parse(data)
+        }
+      } catch (e) {
+        // $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+  })
+}			  
 function decrypt(time, stk, type, url) {
   stk = stk || (url ? getUrlData(url, '_stk') : '')
   if (stk) {

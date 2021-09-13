@@ -32,26 +32,17 @@ cron "16 22 * * *" script-path=jd_small_home.js, tag=东东小窝
 东东小窝 = type=cron,script-path=jd_small_home.js, cronexpr="16 22 * * *", timeout=3600, enable=true
  */
 const $ = new Env('东东小窝');
-const notify = $.isNode() ? require('./sendNotify') : '';
-//Node.js用户请在jdCookie.js处填写京东ck;
-const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message = '';
+let cookiesArr = [], cookie = '', message = '',notify;
 let isPurchaseShops = false;//是否一键加购商品到购物车，默认不加购
 $.helpToken = [];
-if ($.isNode()) {
-  Object.keys(jdCookieNode).forEach((item) => {
-    cookiesArr.push(jdCookieNode[item])
-  })
-  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
-} else {
-  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
-}
+
 $.newShareCodes = [];
 const JD_API_HOST = 'https://lkyl.dianpusoft.cn/api';
 
 !(async () => {
+  await requireConfig();
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
@@ -77,24 +68,20 @@ const JD_API_HOST = 'https://lkyl.dianpusoft.cn/api';
       await smallHome();
     }
   }
-  $.inviteCodes = await getAuthorShareCode('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/jd_updateSmallHomeInviteCode.json')
-  if (!$.inviteCodes) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_updateSmallHomeInviteCode.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
-    await $.wait(1000)
-    $.inviteCodes = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_updateSmallHomeInviteCode.json')
-  }
+
+  await shareCodesFormat();
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
       $.token = $.helpToken[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+	  await helpFriends();
       if ($.newShareCodes.length > 1) {
-        // console.log('----', (i + 1) % $.newShareCodes.length)
         let code = $.newShareCodes[(i + 1) % $.newShareCodes.length]['code']
         console.log(`\n${$.UserName} 去给自己的下一账号 ${decodeURIComponent($.newShareCodes[(i + 1) % $.newShareCodes.length]['cookie'].match(/pt_pin=([^; ]+)(?=;?)/) && $.newShareCodes[(i + 1) % $.newShareCodes.length]['cookie'].match(/pt_pin=([^; ]+)(?=;?)/)[1])}助力，助力码为 ${code}`)
         await createAssistUser(code, $.createAssistUserID);
       }
-      await helpFriends();
+     
     }
   }
 })()
@@ -149,7 +136,6 @@ async function helpFriends() {
   // await updateInviteCode();
   // if (!$.inviteCodes) await updateInviteCodeCDN();
   if ($.inviteCodes && $.inviteCodes['inviteCode'] && $.inviteCodes['inviteCode'].length) {
-    console.log(`\n去帮助作者\n`)
     for (let item of $.inviteCodes.inviteCode) {
       if (!item) continue
       await createAssistUser(item, $.createAssistUserID);
@@ -825,6 +811,36 @@ function getAuthorShareCode(url) {
     })
   })
 }
+function requireConfig() {
+  return new Promise(async resolve => {
+    console.log('开始获取配置文件\n')
+    notify = $.isNode() ? require('./sendNotify') : '';
+    //Node.js用户请在jdCookie.js处填写京东ck;
+    const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+  
+    //IOS等用户直接用NobyDa的jd cookie
+    if ($.isNode()) {
+      Object.keys(jdCookieNode).forEach((item) => {
+        if (jdCookieNode[item]) {
+          cookiesArr.push(jdCookieNode[item])
+        }
+      })
+      if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
+    } else {
+      cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
+    }
+    console.log(`共${cookiesArr.length}个京东账号\n`)
+     $.inviteCodes = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_smallHome.json')
+	  if (!$.inviteCodes) {
+		$.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_smallHome.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+		await $.wait(1000)
+		$.inviteCodes = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_smallHome.json')
+	  }
+    resolve()
+  })
+}
+
+
 function taskUrl(url, body = {}) {
   return {
     url: `${JD_API_HOST}/${url}?body=${escape(body)}`,

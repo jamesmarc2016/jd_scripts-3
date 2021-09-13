@@ -39,10 +39,7 @@ if ($.isNode()) {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-const inviteCodes = [
-  `S9KUiH11Mq1bSKBo@S5KkcRh9P9FbRKUygl_UJcg@StvV3SBcQ8Vw@S5KkcEV9ThDGWdWGw0K5u@S5KkcRktN8lyBdEj1kaQMdw@Sa3LolJe5IPhP9aNJQlGD@S5KkcR0pM91aBIhmgxf9bcA@S5KkcREwR_VXRIB78kvRYcg@S5KkcRE8b9QGEIEz0nKRbJw`,
-  `S9KUiH11Mq1bSKBo@S5KkcRh9P9FbRKUygl_UJcg@StvV3SBcQ8Vw@S5KkcEV9ThDGWdWGw0K5u@S5KkcRktN8lyBdEj1kaQMdw@Sa3LolJe5IPhP9aNJQlGD@S5KkcR0pM91aBIhmgxf9bcA@S5KkcREwR_VXRIB78kvRYcg@S5KkcRE8b9QGEIEz0nKRbJw`,
-]
+const inviteCodes = []
 let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000);
 !(async () => {
   await requireConfig();
@@ -68,7 +65,8 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
         }
         continue
       }
-      await shareCodesFormat()
+	  //助力功能下线故屏蔽
+     /*  await shareCodesFormat() */
       await jdWish()
     }
   }
@@ -93,7 +91,7 @@ async function jdWish() {
   $.assistStatus = 0;
   await getTaskList(true)
 
-  // await helpFriends()
+ /*  await helpFriends() */
   await getUserInfo()
   $.nowBean = parseInt($.totalBeanNum)
   $.nowNum = parseInt($.totalNum)
@@ -261,10 +259,10 @@ function shareCodesFormat() {
       const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
       $.newShareCodes = inviteCodes[tempIndex].split('@');
     }
-    const readShareCodeRes = await readShareCode();
+   /*  const readShareCodeRes = await readShareCode();
     if (readShareCodeRes && readShareCodeRes.code === 200) {
       $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
-    }
+    } */
     console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
     resolve();
   })
