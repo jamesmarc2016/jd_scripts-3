@@ -110,7 +110,6 @@ async function getCouponConfig() {
                 let pin = await getsecretPin($.UserName)
                 functionId = `ccSignInNew`
                 body = escape(JSON.stringify({"childActivityUrl":"openapp.jdmobile://virtual?params={\"category\":\"jump\",\"des\":\"couponCenter\"}","monitorRefer":"appClient","monitorSource":"cc_sign_android_index_config","pageClickKey":"Coupons_GetCenter","pin":pin}))
-												   
               }
             }
             if (functionId && body) await ccSign(functionId, body)
@@ -154,12 +153,6 @@ async function ccSign(functionId, body) {
 }
 function getSign(functionid, body, uuid) {
   return new Promise(async resolve => {
-					 
-									   
-							 
-			
-							  
-	 
     let data = {
       "functionId":functionid,
       "body":body,
@@ -167,13 +160,16 @@ function getSign(functionid, body, uuid) {
       "client":"android",
       "clientVersion":"10.1.2"
     }
+    let HostArr = ['jdsign.cf', 'signer.nz.lu']
+    let Host = HostArr[Math.floor((Math.random() * HostArr.length))]
     let options = {
-      url: `https://cdn.jdsign.cf/ddo`,
+      url: `https://cdn.nz.lu/ddo`,
       body: JSON.stringify(data),
       headers: {
-        "Host": "jdsign.cf",
+        Host,
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      }
+      },
+      timeout: 15000
     }
     $.post(options, (err, resp, data) => {
       try {
@@ -196,13 +192,16 @@ function getsecretPin(pin) {
     let data = {
       "pt_pin": pin
     }
+    let HostArr = ['jdsign.cf', 'signer.nz.lu']
+    let Host = HostArr[Math.floor((Math.random() * HostArr.length))]
     let options = {
-      url: `https://cdn.jdsign.cf/pin`,
+      url: `https://cdn.nz.lu/pin`,
       body: JSON.stringify(data),
       headers: {
-        "Host": "jdsign.cf",
+        Host,
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      }
+      },
+      timeout: 15000
     }
     $.post(options, (err, resp, data) => {
       try {

@@ -31,9 +31,9 @@ let cookiesArr = [], cookie = '', jdPetShareArr = [], isBox = false, notify, new
 //下面给出两个账号的填写示例（iOS只支持2个京东账号）
 let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好友的shareCode
   //账号一的好友shareCode,不同好友的shareCode中间用@符号隔开
-  'MTE1NDQ5OTUwMDAwMDAwNDIxNzc2MDk=@MTE1NDQ5OTUwMDAwMDAwNDM0MDAwNjk=@MTE1NDUwMTI0MDAwMDAwMDQ1MTYzMTcx@MTE1NDUyMjEwMDAwMDAwNDUxNjYzMTM=@MTE1NDQ5OTIwMDAwMDAwNDQ2NzY0ODE=',
+  'MTAxODcxOTI2NTAwMDAwMDAyNTE5ODU4OQ==@MTAxODEyMjkyMDAwMDAwMDM5MzI3ODM1@MTE1NDUyMjEwMDAwMDAwMzUyNDI3Njk=@MTE1NDUyMjEwMDAwMDAwMzgxMjgwNjM=@MTE1NDAxNzYwMDAwMDAwMzk2NjQ2MjE=@MTE1NDQ5MzYwMDAwMDAwMzgwNzQxMTc=@MTAxODc2NTE0NzAwMDAwMDAyMTgwNDcwNw==',
   //账号二的好友shareCode,不同好友的shareCode中间用@符号隔开
-  'MTE1NDQ5OTUwMDAwMDAwNDIxNzc2MDk=@MTE1NDQ5OTUwMDAwMDAwNDM0MDAwNjk=@MTE1NDUwMTI0MDAwMDAwMDQ1MTYzMTcx@MTE1NDUyMjEwMDAwMDAwNDUxNjYzMTM=@MTE1NDQ5OTIwMDAwMDAwNDQ2NzY0ODE=',
+  'MTAxODcxOTI2NTAwMDAwMDAyNTE5ODU4OQ==@MTAxODEyMjkyMDAwMDAwMDM5MzI3ODM1@MTE1NDUyMjEwMDAwMDAwMzUyNDI3Njk=@MTE1NDUyMjEwMDAwMDAwMzgxMjgwNjM=@MTE1NDAxNzYwMDAwMDAwMzk2NjQ2MjE=@MTE1NDQ5MzYwMDAwMDAwMzgwNzQxMTc=@MTAxODc2NTE0NzAwMDAwMDAyMTgwNDcwNw==',
 ]
 let message = '', subTitle = '', option = {};
 let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭通知推送
@@ -86,18 +86,18 @@ async function jdPet() {
   try {
     //查询jd宠物信息
     const initPetTownRes = await request('initPetTown');
-    message = `【京东账号${$.index}】${$.nickName}\n`;
+    message = `【京东账号${$.index}】${$.nickName || $.UserName}\n`;
     if (initPetTownRes.code === '0' && initPetTownRes.resultCode === '0' && initPetTownRes.message === 'success') {
       $.petInfo = initPetTownRes.result;
       if ($.petInfo.userStatus === 0) {
-        // $.msg($.name, '', `【提示】京东账号${$.index}${$.nickName}\n萌宠活动未开启\n请手动去京东APP开启活动\n入口：我的->游戏与互动->查看更多开启`, { "open-url": "openapp.jdmoble://" });
+        // $.msg($.name, '', `【提示】京东账号${$.index}${$.nickName || $.UserName}\n萌宠活动未开启\n请手动去京东APP开启活动\n入口：我的->游戏与互动->查看更多开启`, { "open-url": "openapp.jdmoble://" });
         await slaveHelp();//助力好友
-        $.log($.name, '', `【提示】京东账号${$.index}${$.nickName}\n萌宠活动未开启\n请手动去京东APP开启活动\n入口：我的->游戏与互动->查看更多开启`);
+        $.log($.name, '', `【提示】京东账号${$.index}${$.nickName || $.UserName}\n萌宠活动未开启\n请手动去京东APP开启活动\n入口：我的->游戏与互动->查看更多开启`);
         return
       }
       if (!$.petInfo.goodsInfo) {
-        $.msg($.name, '', `【提示】京东账号${$.index}${$.nickName}\n暂未选购新的商品`, { "open-url": "openapp.jdmoble://" });
-        if ($.isNode()) await notify.sendNotify(`${$.name} - ${$.index} - ${$.nickName}`, `【提示】京东账号${$.index}${$.nickName}\n暂未选购新的商品`);
+        $.msg($.name, '', `【提示】京东账号${$.index}${$.nickName || $.UserName}\n暂未选购新的商品`, { "open-url": "openapp.jdmoble://" });
+        if ($.isNode()) await notify.sendNotify(`${$.name} - ${$.index} - ${$.nickName || $.UserName}`, `【提示】京东账号${$.index}${$.nickName || $.UserName}\n暂未选购新的商品`);
         return
       }
       goodsUrl = $.petInfo.goodsInfo && $.petInfo.goodsInfo.goodsUrl;
@@ -108,7 +108,7 @@ async function jdPet() {
         option['open-url'] = "openApp.jdMobile://";
         $.msg($.name, ``, `【京东账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.petInfo.goodsInfo.goodsName}已可领取\n请去京东APP或微信小程序查看\n点击弹窗即达`, option);
         if ($.isNode()) {
-          await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}奖品已可领取`, `京东账号${$.index} ${$.nickName}\n${$.petInfo.goodsInfo.goodsName}已可领取`);
+          await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}奖品已可领取`, `京东账号${$.index} ${$.nickName || $.UserName}\n${$.petInfo.goodsInfo.goodsName}已可领取`);
         }
         return
       } else if ($.petInfo.petStatus === 6) {
@@ -116,11 +116,31 @@ async function jdPet() {
         option['open-url'] = "openApp.jdMobile://";
         $.msg($.name, ``, `【京东账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】已领取红包,但未继续领养新的物品\n请去京东APP或微信小程序查看\n点击弹窗即达`, option);
         if ($.isNode()) {
-          await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}奖品已可领取`, `京东账号${$.index} ${$.nickName}\n已领取红包,但未继续领养新的物品`);
+          await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}奖品已可领取`, `京东账号${$.index} ${$.nickName || $.UserName}\n已领取红包,但未继续领养新的物品`);
         }
         return
       }
       console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${$.petInfo.shareCode}\n`);
+
+      // ***************************
+      // 报告运行次数
+      $.get({
+        url: `https://cdn.nz.lu/api/runTimes?activityId=pet&sharecode=${$.petInfo.shareCode}`,
+        headers: {
+          'Host': 'api.jdsharecode.xyz'
+        },
+        timeout: 10000
+      }, (err, resp, data) => {
+        if (err) {
+          console.log('上报失败', err)
+        } else {
+          if (data === '1' || data === '0') {
+            console.log('上报成功')
+          }
+        }
+      })
+      // ***************************
+
       await taskInit();
       if ($.taskInit.resultCode === '9999' || !$.taskInit.result) {
         console.log('初始化任务异常, 请稍后再试');
@@ -280,7 +300,7 @@ async function slaveHelp() {
   //return
   let helpPeoples = '';
   for (let code of newShareCodes) {
-    console.log(`开始助力京东账号${$.index} - ${$.nickName}的好友: ${code}`);
+    console.log(`开始助力京东账号${$.index} - ${$.nickName || $.UserName}的好友: ${code}`);
     if (!code) continue;
     let response = await request(arguments.callee.name.toString(), {'shareCode': code});
     if (response.code === '0' && response.resultCode === '0') {
@@ -444,7 +464,7 @@ async function showMsg() {
     $.msg($.name, subTitle, message, option);
     if ($.isNode()) {
       allMessage += `${subTitle}\n${message}${$.index !== cookiesArr.length ? '\n\n' : ''}`
-      // await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}`, `${subTitle}\n${message}`);
+      // await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}`, `${subTitle}\n${message}`);
     }
   } else {
     $.log(`\n${message}\n`);
@@ -452,7 +472,7 @@ async function showMsg() {
 }
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `http://share.turinglabs.net/api/v3/pet/query/${randomCount}/`, 'timeout': 10000}, (err, resp, data) => {
+    $.get({url: `https://cdn.nz.lu/api/pet/${randomCount}`, headers:{'Host':'api.jdsharecode.xyz'}, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -476,36 +496,26 @@ function readShareCode() {
 function shareCodesFormat() {
   return new Promise(async resolve => {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-    newShareCodes = [...($.authorCode || [])];
+    newShareCodes = [];
     if ($.shareCodesArr[$.index - 1]) {
-      let helpShareCodes = $.shareCodesArr[$.index - 1].split('@');
-	  helpShareCodes.forEach(element => {
-			if( newShareCodes.indexOf(element) == -1){
-			  newShareCodes.push(element);
-			}
-		});
+      newShareCodes = $.shareCodesArr[$.index - 1].split('@');
     } else {
       console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
-       let helpShareCodes = shareCodes[tempIndex].split('@');
-	    helpShareCodes.forEach(element => {
-			if( newShareCodes.indexOf(element) == -1){
-			  newShareCodes.push(element);
-			}
-		});
+      newShareCodes = shareCodes[tempIndex].split('@');
     }
     //因好友助力功能下线。故暂时屏蔽
-    // const readShareCodeRes = await readShareCode();
+    const readShareCodeRes = await readShareCode();
     //const readShareCodeRes = null;
-    // if (readShareCodeRes && readShareCodeRes.code === 200) {
-      // newShareCodes = [...new Set([...newShareCodes, ...(readShareCodeRes.data || [])])];
-    // }
+    if (readShareCodeRes && readShareCodeRes.code === 200) {
+      newShareCodes = [...new Set([...newShareCodes, ...(readShareCodeRes.data || [])])];
+    }
     console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify(newShareCodes)}`)
     resolve();
   })
 }
 function requireConfig() {
-  return new Promise(async resolve => {
+  return new Promise(resolve => {
     console.log('开始获取东东萌宠配置文件\n')
     notify = $.isNode() ? require('./sendNotify') : '';
     //Node.js用户请在jdCookie.js处填写京东ck;
@@ -537,12 +547,6 @@ function requireConfig() {
     // console.log(`$.shareCodesArr::${JSON.stringify($.shareCodesArr)}`)
     // console.log(`jdPetShareArr账号长度::${$.shareCodesArr.length}`)
     console.log(`您提供了${$.shareCodesArr.length}个账号的东东萌宠助力码\n`);
-	$.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_pet.json')
-	if (!$.authorCode) {
-		$.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_pet.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
-		await $.wait(1000)
-		$.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_pet.json') || []
-	}
     resolve()
   })
 }
@@ -573,17 +577,15 @@ function TotalBean() {
               $.isLogin = false; //cookie过期
               return
             }
-            if (data['retcode'] === 0) {
-              $.nickName = (data['base'] && data['base'].nickname) || $.UserName;
-            } else {
-              $.nickName = $.UserName
+            if (data['retcode'] === 0 && data.base && data.base.nickname) {
+              $.nickName = data.base.nickname;
             }
           } else {
             console.log(`京东服务器返回空数据`)
           }
         }
       } catch (e) {
-        $.logErr(e, resp)
+        $.logErr(e)
       } finally {
         resolve();
       }
@@ -633,41 +635,6 @@ function taskUrl(function_id, body = {}) {
       'Content-Type': 'application/x-www-form-urlencoded',
     }
   };
-}
-function getAuthorShareCode(url) {
-  return new Promise(resolve => {
-    const options = {
-      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      }
-    };
-    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
-      const tunnel = require("tunnel");
-      const agent = {
-        https: tunnel.httpsOverHttp({
-          proxy: {
-            host: process.env.TG_PROXY_HOST,
-            port: process.env.TG_PROXY_PORT * 1
-          }
-        })
-      }
-      Object.assign(options, { agent })
-    }
-    $.get(options, async (err, resp, data) => {
-      try {
-        if (err) {
-          // console.log(`${JSON.stringify(err)}`)
-          // console.log(`${$.name} API请求失败，请检查网路重试`)
-        } else {
-          if (data) data = JSON.parse(data)
-        }
-      } catch (e) {
-        // $.logErr(e, resp)
-      } finally {
-        resolve(data);
-      }
-    })
-  })
 }
 function jsonParse(str) {
   if (typeof str == "string") {

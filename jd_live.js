@@ -21,7 +21,6 @@ cron "10-20/5 12 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/s
 京东直播 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_live.js, cronexpr="10-20/5 12 * * *", timeout=3600, enable=true
  */
 const $ = new Env('京东直播');
-
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -292,13 +291,16 @@ function getSign(functionid, body, uuid) {
       "client":"apple",
       "clientVersion":"10.1.0"
     }
+    let HostArr = ['jdsign.cf', 'signer.nz.lu']
+    let Host = HostArr[Math.floor((Math.random() * HostArr.length))]
     let options = {
-      url: `https://cdn.jdsign.cf/ddo`,
+      url: `https://cdn.nz.lu/ddo`,
       body: JSON.stringify(data),
       headers: {
-        "Host": "jdsign.cf",
+        Host,
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      }
+      },
+      timeout: 15000
     }
     $.post(options, (err, resp, data) => {
       try {
@@ -330,7 +332,6 @@ function taskPostUrl(function_id, body = {}, url=null) {
       "Referer": "",
       "Cookie": cookie,
       "Origin": "https://h5.m.jd.com",
-										
       'Content-Type': 'application/x-www-form-urlencoded',
       "Content-Length": "996",
       "User-Agent": "JD4iPhone/167774 (iPhone; iOS 14.7.1; Scale/3.00)",
@@ -343,7 +344,6 @@ function taskUrl(function_id, body = {}) {
   return {
     url: `${JD_API_HOST}?functionId=${function_id}&appid=h5-live&body=${escape(JSON.stringify(body))}&v=${new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*60*60*1000}&uuid=${uuid}`,
     headers: {
-					   
       "Host": "api.m.jd.com",
       "Accept": "application/json, text/plain, */*",
       'Content-Type': 'application/x-www-form-urlencoded',

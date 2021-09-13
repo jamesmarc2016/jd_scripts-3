@@ -30,7 +30,14 @@ let cookiesArr = [], cookie = '', message;
 let helpAuthor = true;
 const randomCount = $.isNode() ? 5 : 5;
 let cash_exchange = false;//是否消耗2元红包兑换200京豆，默认否
-const inviteCodes = ["eU9YaeW2Mv1zpD-HmiVHhQ@eU9YKJL3FLtYggSzvjdN@eU9YE77yI6Rxiyi8qTVk@eU9Ya-WwYf0i9jjVy3URgw@eU9Yaey7MvRz8GmEyHVC0Q","eU9YaeW2Mv1zpD-HmiVHhQ@eU9YKJL3FLtYggSzvjdN@eU9YE77yI6Rxiyi8qTVk@eU9Ya-WwYf0i9jjVy3URgw@eU9Yaey7MvRz8GmEyHVC0Q"]
+
+const inviteCodes = [
+`eU9YaeW2Mv1zpD-HmiVHhQ@eU9YKJL3FLtYggSzvjdN@eU9YE77yI6Rxiyi8qTVk@eU9Ya-WwYf0i9jjVy3URgw@eU9Yaey7MvRz8GmEyHVC0Q`,
+`eU9YaeW2Mv1zpD-HmiVHhQ@eU9YKJL3FLtYggSzvjdN@eU9YE77yI6Rxiyi8qTVk@eU9Ya-WwYf0i9jjVy3URgw@eU9Yaey7MvRz8GmEyHVC0Q`
+]
+	
+
+
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -213,7 +220,6 @@ function index() {
                     await doTask(task.type, task.jump.params.shopId)
                     await $.wait(5000)
                   }
-				   
                 } else if (task.type === 31) {
                   for (let i = task.doTimes; i < task.times; ++i) {
                     console.log(`去做${task.name}任务 ${i+1}/${task.times}`)
@@ -438,13 +444,16 @@ function getSign(functionid, body, uuid) {
       "client":"apple",
       "clientVersion":"10.1.0"
     }
+    let HostArr = ['jdsign.cf', 'signer.nz.lu']
+    let Host = HostArr[Math.floor((Math.random() * HostArr.length))]
     let options = {
-       url: `https://cdn.jdsign.cf/ddo`,
+      url: `https://cdn.nz.lu/ddo`,
       body: JSON.stringify(data),
       headers: {
-		"Host": "jdsign.cf",				
+        Host,
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      }
+      },
+      timeout: 15000
     }
     $.post(options, (err, resp, data) => {
       try {
@@ -482,7 +491,7 @@ function showMsg() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: `https://code.chiang.fun/api/v1/jd/jdcash/read/${randomCount}/`, 'timeout': 10000}, (err, resp, data) => {
+    $.get({url: `http://code.chiang.fun/api/v1/jd/jdcash/read/${randomCount}/`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -509,12 +518,12 @@ function shareCodesFormat() {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
     $.newShareCodes = [...($.authorCode || [])];
     if ($.shareCodesArr[$.index - 1]) {
-      let helpShareCodes = $.shareCodesArr[$.index - 1].split('@');
+	   let helpShareCodes = $.shareCodesArr[$.index - 1].split('@');
 	   helpShareCodes.forEach(element => {
 			if( $.newShareCodes.indexOf(element) == -1){
 			  $.newShareCodes.push(element);
 			}
-		 })							   																						
+		 })										   					   
     } else {
       console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
@@ -522,10 +531,10 @@ function shareCodesFormat() {
       let authorCode = deepCopy($.authorCode)
       $.newShareCodes = [...(authorCode.map((item, index) => authorCode[index] = item['inviteCode'])), ...$.newShareCodes];
     }
-   /*  const readShareCodeRes = await readShareCode();
-    if (readShareCodeRes && readShareCodeRes.code === 200) {
-      $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
-    } */
+    // const readShareCodeRes = await readShareCode();
+    // if (readShareCodeRes && readShareCodeRes.code === 200) {
+      // $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
+    // }
     $.newShareCodes.map((item, index) => $.newShareCodes[index] = { "inviteCode": item, "shareDate": $.shareDate })
     console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
     resolve();
@@ -558,12 +567,13 @@ function requireConfig() {
       console.log(`\nBoxJs设置的京东签到领现金邀请码:${$.getdata('jd_cash_invite')}\n`);
     }
     console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
-		$.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_cash.json')
-		if (!$.authorCode) {
-				$.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_cash.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
-				await $.wait(1000)
-				$.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_cash.json') || []
-		 }																								
+	
+	$.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_cash.json')
+	if (!$.authorCode) {
+			$.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_cash.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+			await $.wait(1000)
+			$.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_cash.json') || []
+	 }					  
     resolve()
   })
 }

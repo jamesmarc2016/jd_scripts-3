@@ -29,8 +29,8 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let appId = '1EFRXxg' , homeDataFunPrefix = 'interact_template', collectScoreFunPrefix = 'harmony', message = ''
 let lotteryResultFunPrefix = homeDataFunPrefix, browseTime = 6
 const inviteCodes = [
-  'T0225KkcRRcdoVWCdUumxaFeJwCjVQmoaT5kRrbA@T0205KkcBGBchxOpU3CS4bNUCjVQmoaT5kRrbA@T0205KkcP0xZsAyAWlyd9rF9CjVQmoaT5kRrbA@T0225KkcRxcb8lXTJ0z0lPEIIQCjVQmoaT5kRrbA',
-  'T0225KkcRRcdoVWCdUumxaFeJwCjVQmoaT5kRrbA@T0205KkcBGBchxOpU3CS4bNUCjVQmoaT5kRrbA@T0205KkcP0xZsAyAWlyd9rF9CjVQmoaT5kRrbA@T0225KkcRxcb8lXTJ0z0lPEIIQCjVQmoaT5kRrbA',
+  'T0159KUiH11Mq1bSKBoCjVQmoaT5kRrbA@T0225KkcRh9P9FbRKUygl_UJcgCjVQmoaT5kRrbA',
+  'T0159KUiH11Mq1bSKBoCjVQmoaT5kRrbA@T0225KkcRh9P9FbRKUygl_UJcgCjVQmoaT5kRrbA',
 ];
 const randomCount = $.isNode() ? 20 : 5;
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -48,7 +48,6 @@ if ($.isNode()) {
 
 const JD_API_HOST = `https://api.m.jd.com/client.action`;
 !(async () => {
-  
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
     return;
@@ -283,12 +282,6 @@ function requireConfig() {
       })
     }
     console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
-	$.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_sgmh.json')
-  if (!$.authorCode) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_sgmh.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
-    await $.wait(1000)
-    $.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_sgmh.json') || []
-  }
     resolve()
   })
 }
@@ -297,30 +290,19 @@ function requireConfig() {
 function shareCodesFormat() {
   return new Promise(async resolve => {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-    $.newShareCodes = [...($.authorCode || [])];
+    $.newShareCodes = [];
     if ($.shareCodesArr[$.index - 1]) {
-      // $.newShareCodes = $.shareCodesArr[$.index - 1].split('@');
-	  let shareCodes = $.shareCodesArr[$.index - 1].split('@');
-	  shareCodes.forEach(element => {
-			if(  $.newShareCodes.indexOf(element) == -1){
-			   $.newShareCodes.push(element);
-			}
-		});
+      $.newShareCodes = $.shareCodesArr[$.index - 1].split('@');
     } else {
       console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
-      let shareCodes = inviteCodes[tempIndex].split('@');
-	   shareCodes.forEach(element => {
-			if(  $.newShareCodes.indexOf(element) == -1){
-			   $.newShareCodes.push(element);
-			}
-		});
+      $.newShareCodes = inviteCodes[tempIndex].split('@');
     }
-    /* const readShareCodeRes = await readShareCode();
+    const readShareCodeRes = await readShareCode();
     // console.log(readShareCodeRes)
     if (readShareCodeRes && readShareCodeRes.code === 200) {
       $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
-    } */
+    }
     console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
     resolve();
   })
@@ -330,8 +312,11 @@ function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
     $.get({
-      url: `http://share.turinglabs.net/api/v3/sgmh/query/${randomCount}/`,
-      'timeout': 10000
+      url: `https://cdn.nz.lu/api/sgmh/${randomCount}`,
+      headers: {
+        'Host':'api.jdsharecode.xyz'
+      },
+      timeout: 10000
     }, (err, resp, data) => {
       try {
         if (err) {
@@ -393,42 +378,6 @@ function TotalBean() {
         $.logErr(e, resp)
       } finally {
         resolve();
-      }
-    })
-  })
-}
-
-function getAuthorShareCode(url) {
-  return new Promise(resolve => {
-    const options = {
-      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      }
-    };
-    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
-      const tunnel = require("tunnel");
-      const agent = {
-        https: tunnel.httpsOverHttp({
-          proxy: {
-            host: process.env.TG_PROXY_HOST,
-            port: process.env.TG_PROXY_PORT * 1
-          }
-        })
-      }
-      Object.assign(options, { agent })
-    }
-    $.get(options, async (err, resp, data) => {
-      try {
-        if (err) {
-          // console.log(`${JSON.stringify(err)}`)
-          // console.log(`${$.name} API请求失败，请检查网路重试`)
-        } else {
-          if (data) data = JSON.parse(data)
-        }
-      } catch (e) {
-        // $.logErr(e, resp)
-      } finally {
-        resolve(data);
       }
     })
   })

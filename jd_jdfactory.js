@@ -44,7 +44,7 @@ if ($.isNode()) {
 }
 let wantProduct = ``;//心仪商品名称
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-const inviteCodes = ['T0225KkcRRcdoVWCdUumxaFeJwCjVWnYaS5kRrbA', 'T0205KkcBGBchxOpU3CS4bNUCjVWnYaS5kRrbA', 'T0205KkcP0xZsAyAWlyd9rF9CjVWnYaS5kRrbA', 'T0225KkcRxcb8lXTJ0z0lPEIIQCjVWnYaS5kRrbA', 'T0225KkcRR4QoVyCIR2ll_FbcwCjVWnYaS5kRrbA'];
+const inviteCodes = ['T0159KUiH11Mq1bSKBoCjVWnYaS5kRrbA', 'T0225KkcRh9P9FbRKUygl_UJcgCjVWnYaS5kRrbA', 'T011tvV3SBcQ8VwCjVWnYaS5kRrbA', 'T0225KkcR0pM91aBIhmgxf9bcACjVWnYaS5kRrbA', 'T0205KkcEV9ThDGWdWGw0K5uCjVWnYaS5kRrbA', 'T0225KkcRktN8lyBdEj1kaQMdwCjVWnYaS5kRrbA', 'P04z54XCjVWnYaS5uCHk7RxfanmDaDzc6FquQ'];
 !(async () => {
   await requireConfig();
   if (!cookiesArr[0]) {
@@ -617,7 +617,7 @@ function jdfactory_getHomeData() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: `http://share.turinglabs.net/api/v3/ddfactory/query/${randomCount}/`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `https://cdn.nz.lu/api/ddfactory/${randomCount}`, headers:{'Host':'api.jdsharecode.xyz'}, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -642,38 +642,24 @@ function readShareCode() {
 function shareCodesFormat() {
   return new Promise(async resolve => {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-    $.newShareCodes = [...($.authorCode || [])];
+    $.newShareCodes = [];
     if ($.shareCodesArr[$.index - 1]) {
-   /*    $.newShareCodes = $.shareCodesArr[$.index - 1].split('@'); */
-	  let helpShareCodes = $.shareCodesArr[$.index - 1].split('@');
-	  helpShareCodes.forEach(element => {
-		if( $.newShareCodes.indexOf(element) == -1){
-		   $.newShareCodes.push(element);
-		}
-	  });
-	  
-	  
-	  
+      $.newShareCodes = $.shareCodesArr[$.index - 1].split('@');
     } else {
       console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
-       let helpShareCodes = inviteCodes[tempIndex].split('@');
-	   helpShareCodes.forEach(element => {
-		if( $.newShareCodes.indexOf(element) == -1){
-		   $.newShareCodes.push(element);
-		}
-	  });
+      $.newShareCodes = inviteCodes[tempIndex].split('@');
     }
-    /* const readShareCodeRes = await readShareCode();
+    const readShareCodeRes = await readShareCode();
     if (readShareCodeRes && readShareCodeRes.code === 200) {
       $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
-    } */
+    }
     console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
     resolve();
   })
 }
 function requireConfig() {
-  return new Promise(async resolve => {
+  return new Promise(resolve => {
     console.log(`开始获取${$.name}配置文件\n`);
     //Node.js用户请在jdCookie.js处填写京东ck;
     const shareCodes = $.isNode() ? require('./jdFactoryShareCodes.js') : '';
@@ -688,48 +674,7 @@ function requireConfig() {
     }
     // console.log(`\n种豆得豆助力码::${JSON.stringify($.shareCodesArr)}`);
     console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
-	
-	$.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/FearNoManButGod/AuthorCode/main/jd_jdfactory.json')
-	if (!$.authorCode) {
-		$.http.get({url: 'https://purge.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_jdfactory.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
-		await $.wait(1000)
-		$.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/FearNoManButGod/AuthorCode@main/jd_jdfactory.json') || []
-	}
-	
     resolve()
-  })
-}
-function getAuthorShareCode(url) {
-  return new Promise(resolve => {
-    const options = {
-      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      }
-    };
-    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
-      const tunnel = require("tunnel");
-      const agent = {
-        https: tunnel.httpsOverHttp({
-          proxy: {
-            host: process.env.TG_PROXY_HOST,
-            port: process.env.TG_PROXY_PORT * 1
-          }
-        })
-      }
-      Object.assign(options, { agent })
-    }
-    $.get(options, async (err, resp, data) => {
-      try {
-        if (err) {
-        } else {
-          if (data) data = JSON.parse(data)
-        }
-      } catch (e) {
-        // $.logErr(e, resp)
-      } finally {
-        resolve(data);
-      }
-    })
   })
 }
 function taskPostUrl(function_id, body = {}, function_id2) {
